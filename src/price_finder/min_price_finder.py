@@ -19,7 +19,8 @@ class MinPriceFinder(object):
         '''
         src_city: the source city from where you plan to travel from
         dest_city: the destination city where you plan to travel to
-        start_date_str, end_date_str: the tentative start and end date in (dd/mm/yyyy) format between which you plan to travel
+        start_date_str, end_date_str: the tentative start and end date in (dd/mm/yyyy)
+                                         format between which you plan to travel
         '''
         start_date_param = start_date_str.split('/')
         end_date_param = end_date_str.split('/')
