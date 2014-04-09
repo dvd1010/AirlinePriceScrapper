@@ -13,23 +13,20 @@ class MinPriceFinder(object):
         '''
         Constructor
         '''
-        self.user = 'email_id'
-        self.pwd = 'password'
-        self.smtpserver = smtplib.SMTP("smtp.gmail.com", 587)
-        
+        pass
+    
+    def make_mmt_url(self, source, dest, dd, mm, yyyy):
+        base_url = "http://flights.makemytrip.com/makemytrip/search/O/O/E/1/0/0/S/V0/{0}_{1}_{2}-{3}-{4}"
+        mmt_url = base_url.format(source, dest, dd, mm, yyyy)
+        return self.send_email_of_price_list(mmt_url)
 
-    def send_email_of_price_list(self, url, receiver):
+    def send_email_of_price_list(self, url):
         '''
         '''
         req = urllib2.Request(url)
         response = urllib2.urlopen(req)
         the_page = response.read()
         page_html = the_page.splitlines()
-        self.smtpserver.ehlo()
-        self.smtpserver.starttls()
-        self.smtpserver.ehlo
-        self.smtpserver.login(self.user, self.pwd)
-        header = 'To:' + receiver + '\n' + 'From: ' + self.user + '\n' + 'Subject:testing \n' 
         min_price = self.get_min_price_for_day(page_html)
         airline_name = self.get_airline_name_for_min_price(page_html, min_price)
         return airline_name, min_price
@@ -38,9 +35,9 @@ class MinPriceFinder(object):
         '''
         '''
         for b in a:
-            if 'lowestPriceDisplayed' in b:
-                start_index = b.index("'") + 1
-                finish_index = b.index(".0'")
+            if 'minfare' in b:
+                start_index = b.index("= ") + 1
+                finish_index = b.index(".0")
                 min_price = int(b[start_index:finish_index])
                 return min_price
 
