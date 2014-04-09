@@ -17,6 +17,9 @@ class MinPriceFinder(object):
     
     def get_price_between_two_dates(self, src_city, dest_city, start_date_str, end_date_str):
         '''
+        src_city: the source city from where you plan to travel from
+        dest_city: the destination city where you plan to travel to
+        start_date_str, end_date_str: the tentative start and end date in (dd/mm/yyyy) format between which you plan to travel
         '''
         start_date_param = start_date_str.split('/')
         end_date_param = end_date_str.split('/')
@@ -28,6 +31,8 @@ class MinPriceFinder(object):
     
     def make_mmt_url(self, src_city, dest_city, dd, mm, yyyy):
         '''
+        Function takes input of your source and destination city and date parameters to form the url
+        Returns the airline name and min price 
         '''
         base_url = "http://flights.makemytrip.com/makemytrip/search/O/O/E/1/0/0/S/V0/{0}_{1}_{2}-{3}-{4}"
         mmt_url = base_url.format(src_city, dest_city, dd, mm, yyyy)
@@ -35,17 +40,20 @@ class MinPriceFinder(object):
 
     def get_min_price_for_the_day(self, url):
         '''
+        The function takes input of the dynamically formed url and returns the airline name 
+        and minimum price of the day.
         '''
         req = urllib2.Request(url)
         response = urllib2.urlopen(req)
-        the_page = response.read()
-        page_html = the_page.splitlines()
-        min_price = self.get_price(page_html)
-        airline_name = self.get_airline_name_for_min_price(page_html, min_price)
+        page_html = response.read()
+        page_html_list = page_html.splitlines()
+        min_price = self.get_price(page_html_list)
+        airline_name = self.get_airline_name_for_min_price(page_html_list, min_price)
         return airline_name, min_price
                 
     def get_price(self, a):
         '''
+        The function iterates through the list of line of source html to get the minimum price.
         '''
         for b in a:
             if 'minfare' in b:
@@ -57,6 +65,8 @@ class MinPriceFinder(object):
 
     def get_airline_name_for_min_price(self, a, min_price):
         '''
+        The function iterates through the list of line of source html to get the 
+        airline name corresponding to minimum price.
         '''
         for index, c in enumerate(a):
             if min_price and ('flL mtop5 mleft3 vallabel' in c):
@@ -70,5 +80,8 @@ class MinPriceFinder(object):
                     return flight_name
     
     def daterange(self, start_date, end_date):
-        for n in range(int ((end_date - start_date).days)):
+        '''
+        The function is a generator and iterates between the start and end date
+        '''
+        for n in xrange(int ((end_date - start_date).days)):
             yield start_date + datetime.timedelta(n)
