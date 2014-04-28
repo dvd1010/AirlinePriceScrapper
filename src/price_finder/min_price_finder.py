@@ -7,7 +7,7 @@ import datetime
 import urllib2
 
 
-class MinPriceFinder(object):
+class MinPriceFinder():
 
     def __init__(self):
         '''
@@ -26,9 +26,9 @@ class MinPriceFinder(object):
         end_date_param = end_date_str.split('/')
         start_date = datetime.date(int(start_date_param[2]), int(start_date_param[1]), int(start_date_param[0]))
         end_date = datetime.date(int(end_date_param[2]), int(end_date_param[1]), int(end_date_param[0]) + 1)
-        for single_date in self.daterange(start_date, end_date):
+        for single_date, day in self.daterange(start_date, end_date):
             airline_name, min_price = self.make_mmt_url(src_city, dest_city, single_date.day, single_date.month, single_date.year)
-            print single_date, " ", airline_name, " ", min_price
+            print single_date, " ", day, " ", airline_name, " ", min_price
     
     def make_mmt_url(self, src_city, dest_city, dd, mm, yyyy):
         '''
@@ -85,4 +85,6 @@ class MinPriceFinder(object):
         The function is a generator and iterates between the start and end date
         '''
         for n in xrange(int ((end_date - start_date).days)):
-            yield start_date + datetime.timedelta(n)
+            return_date = start_date + datetime.timedelta(n)
+            yield return_date, return_date.strftime('%A')
+
